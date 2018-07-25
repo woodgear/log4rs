@@ -219,6 +219,8 @@ use log::{Level, LevelFilter, Metadata, Record, SetLoggerError};
 
 #[cfg(feature = "file")]
 pub use priv_file::{init_file, Error};
+pub use priv_file::Format;
+pub use priv_file::init_from_string;
 
 use append::Append;
 use config::Config;

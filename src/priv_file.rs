@@ -55,6 +55,26 @@ where
     }
 }
 
+
+/// Initializes the global logger as a log4rs logger configured via a file.
+///
+/// Configuration is read from a file located at the provided path on the
+/// filesystem and components are created from the provided `Deserializers`.
+///
+/// Any nonfatal errors encountered when processing the configuration are
+/// reported to stderr.
+///
+/// Requires the `file` feature (enabled by default).
+pub fn init_from_string(source: String, format: Format, deserializers: Deserializers) -> Result<(), Error>
+{
+
+    let config = format.parse(&source)?;
+
+    let refresh_rate = config.refresh_rate();
+    let config = deserialize(&config, &deserializers);
+    init_config(config).map(|_|()).map_err(|e|e.into())
+}
+
 /// An error initializing the logging framework from a file.
 #[derive(Debug)]
 pub enum Error {
@@ -101,7 +121,7 @@ impl From<Box<error::Error + Sync + Send>> for Error {
     }
 }
 
-enum Format {
+pub enum Format {
     #[cfg(feature = "yaml_format")] Yaml,
     #[cfg(feature = "json_format")] Json,
     #[cfg(feature = "toml_format")] Toml,
